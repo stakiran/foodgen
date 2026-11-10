@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>異世界屋台の品書き</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* 配置の考え方: 上に条件(町と三つの列)、中央に藍染めの縦書き札が軒先のように並び、下に道具(素材追加・言い換え辞典) */
+:root{
+  --paper:#e6ebe9;
+  --surface:#f5f7f6;
+  --ink:#18262f;
+  --muted:#586870;
+  --line:#c2ccc9;
+  --tag:#1f3357;
+  --tag-ink:#f1f3ee;
+  --tag-sub:#b9c6dc;
+  --accent:#d99a00;
+  --accent-ink:#231a00;
+  --sweet:#c4476b;
+  --salt:#2f8565;
+  --warn:#b23b2a;
+  --display:"Yuji Syuku","Hiragino Mincho ProN","Yu Mincho",serif;
+  --body:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0f151c; --surface:#172029; --ink:#e5eaec; --muted:#93a2aa; --line:#2c3944;
+    --tag:#253d6b; --tag-ink:#f3f4ef; --tag-sub:#b4c3de;
+    --accent:#eeb11f; --accent-ink:#1d1500; --sweet:#e77b9a; --salt:#5fbf99; --warn:#ef7c69;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0f151c; --surface:#172029; --ink:#e5eaec; --muted:#93a2aa; --line:#2c3944;
+  --tag:#253d6b; --tag-ink:#f3f4ef; --tag-sub:#b4c3de;
+  --accent:#eeb11f; --accent-ink:#1d1500; --sweet:#e77b9a; --salt:#5fbf99; --warn:#ef7c69;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.7}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 20px 64px;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{margin:0;text-wrap:balance}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(2rem,6vw,3.2rem);line-height:1.15;letter-spacing:.04em}
+h2{font-family:var(--display);font-weight:400;font-size:1.5rem;letter-spacing:.04em}
+h3{font-size:.82rem;font-weight:700;letter-spacing:.12em;color:var(--muted)}
+p{margin:0}
+.lead{max-width:36em;color:var(--muted);margin-top:8px}
+.rule{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:14px;font-size:.9rem}
+.rule span{border-bottom:2px solid var(--accent);padding-bottom:1px}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px;display:flex;flex-direction:column;gap:18px}
+.row{display:flex;flex-direction:column;gap:8px}
+.rowhead{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:.9rem;line-height:1.3;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--tag);border-color:var(--tag);color:var(--tag-ink)}
+.chip:hover{border-color:var(--ink)}
+.linkbtn{font:inherit;font-size:.8rem;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.townnote{font-size:.85rem;color:var(--muted);min-height:1.5em}
+.opts{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;font-size:.9rem}
+.opts label{display:flex;align-items:center;gap:6px;cursor:pointer}
+select,input[type="text"]{font:inherit;font-size:.95rem;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:4px;padding:7px 10px}
+input[type="checkbox"]{accent-color:var(--tag);width:1.05em;height:1.05em}
+.go{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px}
+.btn{font:inherit;font-weight:700;padding:11px 22px;border-radius:4px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer}
+.btn.sub{background:transparent;color:var(--ink);border-color:var(--line);font-weight:500;padding:8px 14px}
+.btn:hover{filter:brightness(1.06)}
+.count{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.boardhead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 16px;margin-bottom:12px}
+.hint{font-size:.85rem;color:var(--muted)}
+.board{display:flex;flex-wrap:wrap;gap:12px;border-top:6px solid var(--ink);padding-top:14px}
+.tag{--h:19.5rem;position:relative;display:block;height:var(--h);padding:2.5rem .7rem 2.4rem;background:var(--tag);color:var(--tag-ink);border:0;border-radius:3px;font:inherit;text-align:start;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.tag .v{display:block;writing-mode:vertical-rl;height:calc(var(--h) - 4.9rem);text-align:start}
+.tag .v span{display:block}
+.tag .sub{margin-block-start:.35rem}
+.tag::before{content:"";position:absolute;top:.8rem;left:50%;width:.6rem;height:.6rem;margin-left:-.3rem;border-radius:50%;background:var(--paper)}
+.tag .name{font-family:var(--display);font-size:1.45rem;line-height:1.25;letter-spacing:.06em;text-wrap:balance}
+.tag .sub{font-size:.78rem;line-height:1.35;color:var(--tag-sub);letter-spacing:.05em}
+.tag .mark{position:absolute;bottom:.6rem;left:50%;transform:translateX(-50%);font-size:.72rem;font-weight:700;line-height:1;padding:.28rem .4rem;border-radius:999px;color:#fff}
+.tag .mark.sweet{background:var(--sweet)}
+.tag .mark.salt{background:var(--salt)}
+.tag .star{position:absolute;top:-.45rem;right:-.45rem;font-size:.7rem;font-weight:700;background:var(--accent);color:var(--accent-ink);padding:.15rem .4rem;border-radius:2px;transform:rotate(6deg)}
+.tag[aria-pressed="true"]{outline:3px solid var(--accent);outline-offset:2px}
+.tag[aria-pressed="true"]::after{content:"採用";position:absolute;top:1.7rem;left:50%;transform:translateX(-50%);font-size:.66rem;font-weight:700;color:var(--accent);white-space:nowrap}
+@media (prefers-reduced-motion:no-preference){
+  .tag.fresh{animation:drop .32s ease-out both}
+  @keyframes drop{from{transform:translateY(-8px) rotate(-1.5deg)}to{transform:none}}
+}
+.empty{color:var(--warn);font-size:.9rem}
+.out{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.outbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+textarea{width:100%;min-height:9.5em;font:inherit;font-size:.88rem;line-height:1.6;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:10px 12px;resize:vertical}
+
+.two{display:grid;grid-template-columns:1fr 1.6fr;gap:20px;align-items:start}
+.addrow{display:flex;flex-wrap:wrap;gap:8px}
+.addrow input{flex:1 1 9em;min-width:0}
+.mine{display:flex;flex-wrap:wrap;gap:6px;min-height:1.6em;font-size:.85rem;color:var(--muted)}
+.mine button{font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:3px 10px;cursor:pointer}
+.verdict{display:flex;flex-direction:column;gap:4px;font-size:.9rem;min-height:1.6em}
+.verdict b.ok{color:var(--salt)} .verdict b.ng{color:var(--warn)} .verdict b.q{color:var(--muted)}
+.dict{columns:3 14em;column-gap:22px;font-size:.86rem;margin:0;padding:0;list-style:none}
+.dict li{break-inside:avoid;padding:3px 0;border-bottom:1px dotted var(--line);display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+.dict .from{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--warn)}
+.dict .why{font-size:.7rem;color:var(--warn);border:1px solid currentColor;border-radius:2px;padding:0 4px;line-height:1.4}
+@media (max-width:760px){
+  .cols,.two{grid-template-columns:1fr}
+  .tag{--h:17rem}
+  .tag .name{font-size:1.3rem}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>異世界屋台の品書き</h1>
+    <p class="lead">造語を使わず、調理法・素材・形のふつうの言葉を組み合わせて、町の食べ物に名前をつけます。</p>
+    <p class="rule"><span>固有の菓子名は使わない</span><span>地名・人名が由来の語は使わない</span><span>パン、スープ、チーズ、バターは通す</span></p>
+  </header>
+
+  <section class="panel" aria-label="条件">
+    <div class="row">
+      <div class="rowhead"><h3>町</h3></div>
+      <div class="chips" id="towns"></div>
+      <p class="townnote" id="townnote"></p>
+    </div>
+    <div class="cols">
+      <div class="row"><div class="rowhead"><h3>調理法</h3><button class="linkbtn" data-all="g" id="all-g">すべて選ぶ</button></div><div class="chips" id="chips-g"></div></div>
+      <div class="row"><div class="rowhead"><h3>素材</h3><button class="linkbtn" data-all="c" id="all-c">すべて選ぶ</button></div><div class="chips" id="chips-c"></div></div>
+      <div class="row"><div class="rowhead"><h3>形</h3><button class="linkbtn" data-all="s" id="all-s">すべて選ぶ</button></div><div class="chips" id="chips-s"></div></div>
+    </div>
+    <div class="opts">
+      <label for="mode">中身 <select id="mode"><option value="both">菓子と飯</option><option value="sweet">菓子だけ</option><option value="salt">飯だけ</option></select></label>
+      <label for="num">品数 <select id="num"><option>6</option><option>10</option><option selected>12</option><option>15</option><option>20</option></select></label>
+      <label for="monsters"><input type="checkbox" id="monsters"> 魔物の素材を混ぜる</label>
+      <label for="seller"><input type="checkbox" id="seller" checked> 売り手で呼び分ける</label>
+      <label for="nick"><input type="checkbox" id="nick" checked> 主人公のあだ名</label>
+    </div>
+    <div class="go">
+      <button class="btn" id="go">品書きを並べる</button>
+      <button class="btn sub" id="clear">採用を外して並べ直す</button>
+      <span class="count" id="count"></span>
+    </div>
+  </section>
+
+  <section aria-label="品書き">
+    <div class="boardhead">
+      <h2 id="boardtitle">品書き</h2>
+      <span class="hint">札を押すと採用。採用した札は、並べ直しても残ります。</span>
+    </div>
+    <div class="board" id="board"></div>
+    <p class="empty" id="empty" hidden></p>
+    <div class="out">
+      <div class="outbar">
+        <button class="btn sub" id="copy">テキストをコピー</button>
+        <label for="onlypin" class="hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="onlypin"> 採用した札だけ</label>
+        <span class="hint" id="copied" role="status"></span>
+      </div>
+      <textarea id="text" readonly aria-label="品書きのテキスト"></textarea>
+    </div>
+  </section>
+
+  <section class="two">
+    <div class="panel">
+      <h2>素材を足す</h2>
+      <p class="hint">世界固有の素材は、既存の魔物名や動物名で足します。足した素材は出やすくなります。</p>
+      <div class="addrow">
+        <input type="text" id="addname" placeholder="例: 火吹き蜥蜴" aria-label="素材の名前">
+        <select id="addkind" aria-label="素材の種類">
+          <option value="肉:a">生き物の名前（肉として）</option>
+          <option value="卵:a">生き物の名前（卵として）</option>
+          <option value="魚介:a">生き物の名前（魚介として）</option>
+          <option value="肉">肉</option><option value="魚介">魚介</option><option value="野菜">野菜</option><option value="きのこ">きのこ</option>
+          <option value="果物">果物</option><option value="木の実">木の実</option><option value="芋">芋</option><option value="豆">豆</option>
+        </select>
+        <button class="btn sub" id="addbtn">足す</button>
+      </div>
+      <div class="mine" id="mine"></div>
+    </div>
+    <div class="panel">
+      <h2>言い換え辞典</h2>
+      <p class="hint">現実の食べ物を思い浮かべて、ここで言い換えます。名前を入れると、そのまま使えるかも判定します。</p>
+      <input type="text" id="q" placeholder="例: ドーナツ、チーズ入りコロッケ" aria-label="調べる名前">
+      <div class="verdict" id="verdict"></div>
+      <ul class="dict" id="dict"></ul>
+    </div>
+  </section>
+</div>
+
+<script>
+/*ENGINE*/
+const CATS=['粉','芋','豆','木の実','果物','卵','乳','肉','魚介','野菜','きのこ'];
+const GROUPS=[['揚げ','揚げ'],['焼き','焼き・炙り'],['蒸し','蒸し'],['煮','煮・茹で'],['干し','干し'],['燻し','燻し'],['漬け','漬け'],['がけ','蜜がけ・砂糖がけ']];
+const SHAPES=['そのまま','棒','輪','玉','薄切り','串','包み','平たい','丸ごと','挟み','汁もの'];
+
+function I(n,c,o){return Object.assign({n:n,c:c,tags:[],w:1},o||{});}
+const BASE_ING=[
+  I('麦','粉',{narrow:1,tags:['穀']}),I('黒麦','粉',{narrow:1,tags:['穀']}),I('雑穀','粉',{narrow:1,tags:['穀']}),
+  I('芋','芋',{w:2}),I('甘芋','芋',{sweet:1}),
+  I('豆','豆',{w:2}),I('赤豆','豆',{sweet:1}),I('黒豆','豆',{sweet:1}),I('青豆','豆'),
+  I('木の実','木の実',{w:2}),I('栗','木の実'),I('くるみ','木の実'),I('松の実','木の実'),I('どんぐり','木の実'),
+  I('果物','果物',{w:2}),I('りんご','果物'),I('梨','果物'),I('ぶどう','果物'),I('いちご','果物'),I('あんず','果物'),I('桃','果物'),I('柑橘','果物'),I('木いちご','果物'),I('いちじく','果物'),I('なつめ','果物'),
+  I('卵','卵',{w:2}),
+  I('乳','乳',{narrow:1}),I('チーズ','乳',{narrow:1,tags:['チーズ']}),I('バター','乳',{narrow:1}),
+  I('肉','肉',{w:2}),I('鳥','肉',{animal:1}),I('豚','肉',{animal:1}),I('牛','肉',{animal:1}),I('羊','肉',{animal:1}),I('兎','肉',{animal:1}),I('鹿','肉',{animal:1}),I('猪','肉',{animal:1}),
+  I('腸詰め','肉',{narrow:1,tags:['加工肉']}),I('肉団子','肉',{narrow:1,tags:['加工肉']}),I('臓物','肉',{narrow:1,tags:['臓物']}),
+  I('魚','魚介',{w:2}),I('川魚','魚介'),I('小魚','魚介'),I('貝','魚介'),I('海老','魚介'),I('蟹','魚介'),I('いか','魚介'),I('たこ','魚介'),
+  I('野菜','野菜',{w:2}),I('根菜','野菜'),I('葱','野菜'),I('玉葱','野菜'),I('かぶ','野菜'),I('かぼちゃ','野菜'),I('茄子','野菜'),I('青菜','野菜'),
+  I('きのこ','きのこ',{w:2})
+];
+const MONSTERS=[
+  I('ミノタウロス','肉',{animal:1,monster:1,w:1.3}),I('オーク','肉',{animal:1,monster:1,w:1.3}),I('コカトリス','肉',{animal:1,monster:1,w:1.3}),
+  I('ワイバーン','肉',{animal:1,monster:1,w:1.3}),I('バジリスク','肉',{animal:1,monster:1,w:1.3}),I('大蛇','肉',{animal:1,monster:1,w:1.3}),
+  I('クラーケン','魚介',{animal:1,monster:1,w:1.5}),I('マンドラゴラ','野菜',{monster:1,w:1.5}),
+  I('ロック鳥','卵',{animal:1,monster:1,w:1.3}),I('コカトリス','卵',{animal:1,monster:1,w:1.3})
+];
+
+// 「素材の○○」型。t: 甘/塩
+function S(w,g,s,t,c,o){return Object.assign({w:w,g:g,s:s,t:t,c:c},o||{});}
+const SUFFIX=[
+  S('串焼き','焼き','串','塩',['肉','魚介','野菜','きのこ','加工肉','臓物'],{not:['青菜'],h:'串'}),
+  S('串揚げ','揚げ','串','塩',['肉','魚介','野菜','きのこ','チーズ','加工肉'],{not:['青菜'],h:'串'}),
+  S('炙り串','焼き','串','塩',['肉','魚介','加工肉'],{not:['小魚'],h:'串'}),
+  S('干し串','干し','串','塩',['魚介'],{not:['蟹'],h:'串'}),
+  S('塩焼き','焼き','そのまま','塩',['肉','魚介','きのこ']),
+  S('香草焼き','焼き','そのまま','塩',['肉','魚介']),
+  S('炭火焼き','焼き','そのまま','塩',['肉','魚介','きのこ','野菜','臓物'],{not:['青菜']}),
+  S('石焼き','焼き','そのまま','塩',['芋','肉']),
+  S('壺焼き','焼き','そのまま','塩',['貝','芋','鳥','羊','肉']),
+  S('丸焼き','焼き','丸ごと','塩',['鳥','兎','魚','川魚','いか','かぶ','玉葱','かぼちゃ','茄子']),
+  S('バター焼き','焼き','そのまま','塩',['魚介','きのこ','芋'],{not:['小魚']}),
+  S('チーズ焼き','焼き','そのまま','塩',['芋','野菜','きのこ','肉団子'],{not:['葱']}),
+  S('包み焼き','焼き','包み','塩',['肉','魚介','野菜','きのこ','卵','チーズ','芋','豆','加工肉'],{not:['小魚']}),
+  S('包み揚げ','揚げ','包み','塩',['肉','魚介','野菜','きのこ','チーズ','芋','卵'],{not:['小魚']}),
+  S('包み蒸し','蒸し','包み','塩',['肉','魚介','野菜','きのこ'],{not:['小魚']}),
+  S('葉包み焼き','焼き','包み','塩',['魚','川魚','肉','鳥','きのこ','芋']),
+  S('薄焼き包み','焼き','包み','塩',['肉','野菜','チーズ','卵','魚','加工肉']),
+  S('薄揚げ','揚げ','薄切り','塩',['芋','野菜','根菜','かぶ','かぼちゃ','茄子'],{not:['葱','玉葱','青菜']}),
+  S('素揚げ','揚げ','そのまま','塩',['小魚','海老','川魚','野菜','きのこ','芋'],{not:['青菜']}),
+  S('衣揚げ','揚げ','そのまま','塩',['肉','魚介','野菜','きのこ','芋','卵','チーズ'],{not:['青菜']}),
+  S('一口揚げ','揚げ','玉','塩',['肉','魚','いか','たこ','芋','チーズ']),
+  S('棒揚げ','揚げ','棒','塩',['芋','根菜','かぼちゃ','茄子','魚','チーズ']),
+  S('蒸し焼き','蒸し','そのまま','塩',['肉','魚介','野菜','きのこ','芋'],{not:['小魚','青菜']}),
+  S('酒蒸し','蒸し','そのまま','塩',['貝','魚','海老','蟹','鳥','きのこ']),
+  S('煮込み','煮','汁もの','塩',['肉','豆','野菜','魚介','きのこ','加工肉','臓物'],{not:['小魚','青菜']}),
+  S('乳煮','煮','汁もの','塩',['鳥','兎','芋','野菜','魚','貝','きのこ','豆']),
+  S('塩煮','煮','汁もの','塩',['豆','魚介','肉','臓物'],{not:['小魚']}),
+  S('ワイン煮','煮','汁もの','塩',['肉']),
+  S('スープ','煮','汁もの','塩',['豆','野菜','きのこ','肉','魚介','芋','卵','乳','チーズ','加工肉'],{not:['小魚']}),
+  S('粥','煮','汁もの','塩',['麦','雑穀','豆','芋','乳','卵'],{j:''}),
+  S('塩漬け','漬け','そのまま','塩',['肉','魚介','野菜','きのこ'],{not:['蟹']}),
+  S('酢漬け','漬け','そのまま','塩',['魚介','野菜','きのこ','卵'],{not:['蟹']}),
+  S('油漬け','漬け','そのまま','塩',['魚介','きのこ','チーズ'],{not:['蟹']}),
+  S('香草漬け','漬け','そのまま','塩',['肉','魚介','チーズ']),
+  S('一夜干し','干し','そのまま','塩',['魚','川魚','いか','たこ','小魚']),
+  S('天日干し','干し','そのまま','塩',['魚介','きのこ'],{not:['蟹']}),
+  S('挟みパン','焼き','挟み','塩',['肉','魚','海老','チーズ','卵','加工肉']),
+  S('平焼きパン','焼き','平たい','塩',['チーズ','葱','玉葱','きのこ','肉','芋']),
+  S('揚げパン','揚げ','そのまま','塩',['肉','チーズ','卵','豆','芋'],{j:'入りの'}),
+
+  S('蜜焼き','焼き','そのまま','甘',['芋','果物','木の実'],{not:['いちご','木いちご','ぶどう','柑橘','松の実','どんぐり']}),
+  S('包み焼き','焼き','包み','甘',['果物','木の実','赤豆','黒豆','甘芋']),
+  S('包み揚げ','揚げ','包み','甘',['果物','木の実','赤豆','黒豆','甘芋'],{not:['柑橘','ぶどう']}),
+  S('包み蒸し','蒸し','包み','甘',['赤豆','黒豆','木の実','甘芋']),
+  S('薄焼き包み','焼き','包み','甘',['果物','木の実']),
+  S('蜜漬け','漬け','そのまま','甘',['果物','木の実']),
+  S('砂糖漬け','漬け','そのまま','甘',['果物','栗']),
+  S('酒漬け','漬け','そのまま','甘',['果物']),
+  S('蜜がけ','がけ','そのまま','甘',['木の実','果物','芋']),
+  S('砂糖がけ','がけ','そのまま','甘',['木の実','果物','豆']),
+  S('飴がけ','がけ','そのまま','甘',['果物','木の実','芋']),
+  S('飴がけ串','がけ','串','甘',['果物','いちご','りんご','ぶどう','あんず','木いちご'],{h:'串'}),
+  S('蜜煮','煮','そのまま','甘',['果物','赤豆','黒豆','芋','栗']),
+  S('甘煮','煮','そのまま','甘',['豆','芋','栗','かぼちゃ']),
+  S('砂糖煮','煮','そのまま','甘',['果物']),
+  S('ワイン煮','煮','そのまま','甘',['梨','桃','りんご','いちじく','あんず'])
+];
+// 「干し肉」型。meat: 生き物の名前に「〜の干し肉」を許す
+function P(p,g,t,c,o){return Object.assign({p:p,g:g,t:t,c:c,s:'そのまま'},o||{});}
+const PREFIX=[
+  P('干し','干し','塩',['肉','魚介','きのこ'],{not:['蟹'],meat:1}),
+  P('干し','干し','甘',['果物','芋'],{not:['いちご','木いちご','柑橘']}),
+  P('燻し','燻し','塩',['肉','魚介','チーズ','卵','腸詰め'],{meat:1}),
+  P('炙り','焼き','塩',['肉','魚','いか','たこ','チーズ','貝','腸詰め'],{meat:1}),
+  P('焼き','焼き','塩',['魚','川魚','小魚','貝','海老','蟹','いか','たこ','きのこ','茄子','葱','玉葱','かぶ','かぼちゃ','チーズ','腸詰め']),
+  P('焼き','焼き','甘',['栗','りんご','芋','梨','桃','いちじく']),
+  P('揚げ','揚げ','塩',['芋','魚','小魚','鳥','茄子','チーズ','卵','豆','海老','いか','たこ','かぼちゃ','肉団子']),
+  P('蒸し','蒸し','塩',['貝','蟹','海老','鳥','かぼちゃ']),
+  P('蒸し','蒸し','甘',['芋','栗']),
+  P('茹で','煮','塩',['卵','豆','芋','蟹','海老','たこ','貝','腸詰め']),
+  P('煮','煮','塩',['豆','卵','貝','たこ','いか'],{not:['青豆']}),
+  P('炒り','焼き','塩',['豆','木の実'])
+];
+// 粉もの(菓子)。top: 蜜がけなどを載せられる
+function D(w,g,s,o){return Object.assign({w:w,g:g,s:s},o||{});}
+const DOUGH=[
+  D('揚げ菓子','揚げ','そのまま',{top:1}),D('輪の揚げ菓子','揚げ','輪'),D('ねじりの揚げ菓子','揚げ','棒'),D('揚げ棒','揚げ','棒',{top:1}),
+  D('揚げ玉','揚げ','玉',{top:1}),D('揚げ団子','揚げ','玉',{top:1}),D('揚げパン','揚げ','そのまま',{top:1}),D('薄い揚げ菓子','揚げ','薄切り'),
+  D('焼き菓子','焼き','そのまま'),D('堅焼き菓子','焼き','平たい'),D('輪の焼き菓子','焼き','輪'),D('棒の焼き菓子','焼き','棒'),
+  D('薄焼き菓子','焼き','薄切り'),D('厚焼き菓子','焼き','平たい'),D('貝殻形の焼き菓子','焼き','そのまま'),D('渦巻きの焼き菓子','焼き','輪'),
+  D('丸い焼き菓子','焼き','玉'),D('格子の焼き菓子','焼き','平たい'),D('焼き団子','焼き','玉',{top:1}),D('二度焼きパン','焼き','薄切り',{top:1}),
+  D('串団子','焼き','串',{top:1,h:'串'}),
+  D('蒸し菓子','蒸し','そのまま'),D('蒸しパン','蒸し','そのまま'),D('蒸し団子','蒸し','玉',{top:1}),D('茹で団子','煮','玉',{top:1})
+];
+const TOPS=['蜜がけ','砂糖がけ','飴がけ','砂糖まぶし'];
+const FLAVOR=['卵','乳','バター','穀','芋','豆','木の実','果物'];
+
+function matchIng(ing,toks,not){
+  if(not&&not.indexOf(ing.n)>=0)return false;
+  if(toks.indexOf(ing.n)>=0)return true;
+  if(ing.tags.some(function(t){return toks.indexOf(t)>=0;}))return true;
+  return !ing.narrow&&toks.indexOf(ing.c)>=0;
+}
+function buildCandidates(ings){
+  const out=[],seen={};
+  function add(o){if(seen[o.name])return;seen[o.name]=1;out.push(o);}
+  SUFFIX.forEach(function(m){ings.forEach(function(ing){
+    if(m.t==='塩'&&ing.sweet)return;
+    if(!matchIng(ing,m.c,m.not))return;
+    const b=(ing.animal&&ing.c==='卵')?ing.n+'の卵':(ing.animal&&ing.c==='肉'&&m.j==='入りの')?ing.n+'肉':ing.n;
+    add({name:b+(m.j===undefined?'の':m.j)+m.w,word:'s:'+m.w+m.t,fam:'suffix',g:[m.g],s:m.s,t:m.t,c:ing.c,ing:ing,head:m.h||(m.j===''?b+m.w:m.w)});
+  });});
+  PREFIX.forEach(function(m){ings.forEach(function(ing){
+    if(m.t==='塩'&&ing.sweet)return;
+    let name=null,head=null;
+    if(ing.animal){
+      if(m.c.indexOf(ing.n)>=0){name=m.p+ing.n;}
+      else if(ing.c==='肉'&&m.meat){name=ing.n+'の'+m.p+'肉';head=m.p+'肉';}
+      else if(ing.c==='卵'&&m.c.indexOf('卵')>=0){name=ing.n+'の'+m.p+'卵';head=m.p+'卵';}
+    }else if(matchIng(ing,m.c,m.not)){name=m.p+ing.n;}
+    if(!name)return;
+    add({name:name,word:'p:'+m.p+m.t,fam:'prefix',g:[m.g],s:m.s,t:m.t,c:ing.c,ing:ing,head:head||name});
+  });});
+  DOUGH.forEach(function(d){
+    const head=d.h||d.w;
+    add({name:d.w,word:'d:'+d.w,fam:'dough',g:[d.g],s:d.s,t:'甘',c:'粉',ing:null,head:head});
+    if(/の|薄い|丸い/.test(d.w))return;
+    ings.forEach(function(ing){
+      const ok=matchIng(ing,FLAVOR)||(d.g==='焼き'&&ing.n==='チーズ');
+      if(!ok)return;
+      const b=(ing.animal&&ing.c==='卵')?ing.n+'の卵':ing.n;
+      const j=(['木の実','果物','豆'].indexOf(ing.c)>=0&&!/菓子$/.test(d.w))?'入りの':'の';
+      add({name:b+j+d.w,word:'d:'+d.w,fam:'dough',g:[d.g],s:d.s,t:'甘',c:ing.c,ing:ing,head:head});
+    });
+    if(d.top)TOPS.forEach(function(tp){
+      add({name:tp+'の'+d.w,word:'d:'+d.w,fam:'dough',g:[d.g,'がけ'],s:d.s,t:'甘',c:'粉',ing:null,head:head});
+    });
+  });
+  return out;
+}
+
+const TOWNS=[
+  {id:'plain',n:'ふつうの町',note:'偏りなし。迷ったらここから。',c:{},nm:{},g:{},sweet:.4},
+  {id:'port',n:'港町',note:'魚介が主役。干す、漬ける、燻す。',c:{'魚介':8,'肉':.5},nm:{'川魚':.15},g:{'干し':2,'漬け':1.5,'燻し':1.5},sweet:.3},
+  {id:'mount',n:'山の町',note:'木の実ときのこ、鹿や猪。魚は川魚だけ。',c:{'木の実':4,'きのこ':5,'肉':1.5,'魚介':.12},nm:{'鹿':3,'猪':3,'兎':2,'栗':2,'川魚':25},g:{'燻し':2,'干し':1.5},sweet:.4},
+  {id:'farm',n:'麦と畑の村',note:'粉、芋、豆、卵。蒸し物と煮物が多い。',c:{'粉':3,'芋':3,'豆':3,'野菜':2.5,'卵':2,'魚介':.15},nm:{'川魚':8},g:{'蒸し':1.6,'煮':1.5},sweet:.4},
+  {id:'herd',n:'牧畜の町',note:'乳とチーズ、羊と牛。',c:{'乳':5,'肉':2,'魚介':.12},nm:{'羊':4,'牛':3},g:{'燻し':1.5},sweet:.35},
+  {id:'orchard',n:'果樹の里',note:'果物と蜜。甘いものが多い。',c:{'果物':5,'木の実':2},nm:{},g:{'がけ':2,'漬け':1.5},sweet:.6},
+  {id:'snow',n:'雪国の砦町',note:'保存食の土地。燻し、漬け、煮込み。',c:{'果物':.4},nm:{'根菜':4,'かぶ':3,'鹿':2},g:{'燻し':3,'漬け':2.5,'煮':2.5,'干し':2},sweet:.3},
+  {id:'desert',n:'砂漠の交易町',note:'なつめといちじく、羊、豆。揚げ物と蜜がけ。',c:{'木の実':2.5,'乳':2,'魚介':.08},nm:{'なつめ':8,'いちじく':6,'羊':5,'豆':3},g:{'がけ':2,'干し':2,'揚げ':1.5},sweet:.45},
+  {id:'capital',n:'王都',note:'何でも揃う。卵とバターの菓子が多い。',c:{'卵':2,'乳':2,'粉':1.5},nm:{},g:{},sweet:.55}
+];
+
+function pickW(arr,wf){
+  let tot=0;const ws=arr.map(function(x){const w=Math.max(0,wf(x));tot+=w;return w;});
+  if(tot<=0)return null;
+  let r=Math.random()*tot;
+  for(let i=0;i<arr.length;i++){r-=ws[i];if(r<=0)return arr[i];}
+  return arr[arr.length-1];
+}
+function townScore(x,town){
+  let w=1;
+  if(x.ing){w*=(town.c[x.c]||1)*(town.nm[x.ing.n]||1);}else{w*=(town.c['粉']||1);}
+  x.g.forEach(function(g){w*=(town.g[g]||1);});
+  return w;
+}
+function filterPool(cands,sel){
+  return cands.filter(function(x){
+    return x.g.every(function(g){return sel.g.has(g);})&&sel.s.has(x.s)&&sel.c.has(x.c);
+  });
+}
+// kept: 残す札。戻り値は新しく選んだ札
+function sample(pool,n,mode,town,kept){
+  const chosen=[],usedName={},usedIng={},usedWord={},usedG={};
+  function note(x){usedName[x.name]=1;if(x.ing)usedIng[x.ing.n]=(usedIng[x.ing.n]||0)+1;if(x.word)usedWord[x.word]=(usedWord[x.word]||0)+1;usedG[x.g[0]]=(usedG[x.g[0]]||0)+1;}
+  kept.forEach(note);
+  let needSweet=mode==='sweet'?n:mode==='salt'?0:Math.round((n+kept.length)*town.sweet)-kept.filter(function(k){return k.t==='甘';}).length;
+  needSweet=Math.max(0,Math.min(n,needSweet));
+  const FAM={suffix:1,prefix:1.7,dough:1};
+  for(let i=0;i<n;i++){
+    const left=n-i;
+    let t=Math.random()<needSweet/left?'甘':'塩';
+    let picked=null;
+    for(let tries=0;tries<2&&!picked;tries++){
+      const av=pool.filter(function(x){return x.t===t&&!usedName[x.name];});
+      const byWord={};
+      av.forEach(function(x){(byWord[x.word]=byWord[x.word]||[]).push(x);});
+      const words=Object.keys(byWord);
+      const iw=function(x){return (x.ing?x.ing.w*Math.pow(.12,usedIng[x.ing.n]||0):.8)*townScore(x,town);};
+      const w=pickW(words,function(k){
+        const xs=byWord[k];let m=0;xs.forEach(function(x){m+=iw(x);});m/=xs.length;
+        return Math.pow(m,1.6)*FAM[xs[0].fam]*Math.pow(.06,usedWord[k]||0)*Math.pow(.6,usedG[xs[0].g[0]]||0);
+      });
+      if(w)picked=pickW(byWord[w],iw);
+      if(!picked){if(mode!=='both')break;t=t==='甘'?'塩':'甘';}
+    }
+    if(!picked)break;
+    if(picked.t==='甘')needSweet--;
+    note(picked);chosen.push(picked);
+  }
+  return chosen;
+}
+
+const SELLERS=['角の屋台','婆さんの店','門前の露店','橋のたもとの屋台','井戸端の店','市場の奥の店','宿屋の軒先','双子の屋台','髭の親父の屋台','荷車の物売り','教会裏の窯','鐘楼下の屋台','川べりの立ち売り','片目の爺さんの店','水場の露店','坂の上の店','裏通りの窓売り','広場の荷台','城壁沿いの屋台','若夫婦の店'];
+function rnd(a){return a[Math.floor(Math.random()*a.length)];}
+function nickFor(x){
+  const p=[],w=x.name,g=x.g;
+  if(/堅焼き|二度焼き/.test(w))p.push('歯砕き','石ころ','かちかち');
+  if(g.indexOf('がけ')>=0||/蜜|飴/.test(w))p.push('べたべた','指なめ','歯にくっつくやつ','つやつや');
+  if(/砂糖まぶし|砂糖がけ/.test(w))p.push('粉まみれ','袖が白くなるやつ');
+  if(g[0]==='揚げ')p.push('油袋','油もの','きつね色','胸やけ');
+  if(g[0]==='干し')p.push('靴底','革紐','噛み続けるやつ');
+  if(g[0]==='燻し')p.push('煙くさいの','焚き火味');
+  if(g[0]==='漬け')p.push(x.t==='甘'?'甘すぎるやつ':'しょっぱいの',x.t==='甘'?'瓶のやつ':'壺のやつ');
+  if(g[0]==='蒸し')p.push('湯気のやつ');if(g[0]==='蒸し'&&x.fam==='dough')p.push('ふかふか','白いの');if(g[0]==='焼き'&&x.fam!=='dough')p.push('焦げ目');
+  if(x.s==='汁もの')p.push('茶色いの','鍋の底','腹ぬくめ','どろどろ');
+  if(x.s==='包み')p.push('当たり外れ','中身は秘密','熱袋','火傷のもと');
+  if(x.s==='薄切り')p.push('ぱりぱり','音のするやつ');
+  if(x.s==='棒')p.push('例の棒','杖');
+  if(x.s==='輪')p.push('輪っか','穴あき');
+  if(x.s==='玉')p.push('丸いの','ころころ');
+  if(x.s==='平たい')p.push('円盤','皿いらず');
+  if(x.s==='丸ごと')p.push('丸ごと','祭りのやつ');
+  if(x.s==='挟み')p.push('片手飯','歩き飯','はみ出すやつ');
+  if(x.s==='串')p.push('例の串','いつもの串','一本');
+  if(/茹で/.test(w))p.push('湯上がり');
+  if(x.monster)p.push('元の姿は考えない','討伐帰り');
+  if(!p.length)p.push('いつものやつ','例のあれ','毎度のやつ');
+  return rnd(p);
+}
+function decorate(list,kept,town){
+  const used={};kept.forEach(function(k){used[k.seller]=1;});
+  const free=SELLERS.filter(function(s){return !used[s];}).sort(function(){return Math.random()-.5;});
+  const usedNick={};kept.forEach(function(k){usedNick[k.nick]=1;});
+  const items=list.map(function(x,i){
+    let nk=nickFor(x);for(let k=0;k<6&&usedNick[nk];k++)nk=nickFor(x);usedNick[nk]=1;
+    return {name:x.name,t:x.t,g:x.g,s:x.s,c:x.c,head:x.s==='串'?'串':x.head,word:x.word,ingn:x.ing?x.ing.n:null,monster:!!(x.ing&&x.ing.monster),
+      seller:free[i%Math.max(1,free.length)]||rnd(SELLERS),nick:nk,score:townScore(x,town),star:false,pinned:false};
+  });
+  if(town.id!=='plain'){
+    const stars=kept.filter(function(k){return k.star;}).length;
+    items.slice().sort(function(a,b){return b.score-a.score;}).slice(0,Math.max(0,2-stars)).forEach(function(x){if(x.score>=3)x.star=true;});
+  }
+  return items;
+}
+
+const DICT=[
+  ['ドーナツ','輪の揚げ菓子','k'],['かりんとう','蜜がけの揚げ棒','k'],['クッキー','堅焼き菓子','k'],['ビスケット','薄い堅焼き菓子','k'],
+  ['プリン','卵の蒸し菓子','k'],['ポテトチップス','芋の薄揚げ','k'],['フライドポテト','芋の棒揚げ','k'],['コロッケ','芋の衣揚げ','k'],
+  ['ジャーキー','干し肉','k'],['ハンバーグ','挽き肉の平焼き','p'],['サンドイッチ','挟みパン','h'],['カステラ','卵の厚焼き菓子','p'],
+  ['ホットドッグ','腸詰めの挟みパン','k'],['フランクフルト','腸詰めの串焼き','p'],['ウインナー','腸詰め','p'],['ソーセージ','腸詰め','k'],
+  ['ベーコン','豚の燻し肉','k'],['ハム','塩漬け肉','k'],['ピザ','チーズの平焼きパン','k'],['パイ','包み焼き','k'],
+  ['ミートパイ','肉の包み焼き','k'],['アップルパイ','りんごの包み焼き','k'],['タルト','果物の皿焼き菓子','k'],['クレープ','薄焼き包み','k'],
+  ['ワッフル','格子の焼き菓子','k'],['パンケーキ','厚焼き菓子','k'],['マドレーヌ','貝殻形の焼き菓子','h'],['チュロス','ねじりの揚げ菓子','k'],
+  ['ラスク','二度焼きパン','k'],['フレンチトースト','卵浸しの焼きパン','p'],['ベーグル','茹で焼きの輪パン','k'],['プレッツェル','結び形の塩パン','k'],
+  ['スコーン','割って食べる焼き菓子','k'],['キャンディ','飴玉','k'],['キャラメル','乳の煮詰め飴','k'],['ジャム','果物の砂糖煮','k'],
+  ['マーマレード','柑橘の皮の砂糖煮','k'],['ドライフルーツ','干し果物','k'],['りんご飴','りんごの飴がけ','k'],['大学芋','芋の蜜がけ','k'],
+  ['ヨーグルト','酸っぱい固め乳','k'],['アイスクリーム','乳の氷菓子','k'],['ゼリー','果汁の固め菓子','k'],['チーズケーキ','チーズの焼き菓子','k'],
+  ['ピクルス','野菜の酢漬け','k'],['シチュー','煮込み','k'],['カレー','香辛料の煮込み','k'],['ポタージュ','すり流しのスープ','k'],
+  ['グラタン','乳煮のチーズ焼き','k'],['オムレツ','卵の包み焼き','k'],['ミートボール','肉団子','k'],['ナゲット','鳥の一口揚げ','k'],
+  ['カツ','肉の衣揚げ','k'],['メンチカツ','挽き肉の衣揚げ','k'],['天ぷら','衣揚げ','k'],['フィッシュアンドチップス','揚げ魚と揚げ芋','k'],
+  ['餃子','挽き肉の包み焼き','k'],['肉まん','肉の包み蒸し','k'],['たこ焼き','たこの玉焼き','k'],['ケバブ','削ぎ肉の挟みパン','k'],
+  ['タコス','肉の薄焼き包み','k'],['オートミール','麦粥','k'],['ポップコーン','弾け粒の炒り菓子','k'],['マカロン','木の実粉の丸い焼き菓子','k']
+];
+const WHY={k:'固有名',p:'地名由来',h:'人名由来'};
+const OKWORDS=['パン','スープ','チーズ','バター','ソース','ワイン','ミルク','クリーム','ハーブ','スパイス','サラダ','ジュース','エール'];
+function judge(text,monsterNames){
+  const res=[];const hit={};
+  DICT.slice().sort(function(a,b){return b[0].length-a[0].length;}).forEach(function(d){
+    if(text.indexOf(d[0])>=0&&!Object.keys(hit).some(function(h){return h.indexOf(d[0])>=0;})){hit[d[0]]=1;res.push({v:'ng',w:d[0],msg:WHY[d[2]]+'なので避ける。言い換え: '+d[1]});}
+  });
+  (text.match(/[ァ-ヴー]{2,}/g)||[]).forEach(function(k){
+    if(Object.keys(hit).some(function(h){return h.indexOf(k)>=0||k.indexOf(h)>=0;}))return;
+    if(hit[k])return;hit[k]=1;
+    if(OKWORDS.indexOf(k)>=0)res.push({v:'ok',w:k,msg:'一般名詞として定着しているので通る。'});
+    else if(monsterNames.indexOf(k)>=0)res.push({v:'ok',w:k,msg:'魔物の名前なので通る。'});
+    else res.push({v:'q',w:k,msg:'辞典にない外来語。固有の品名や地名・人名由来でなければ通る。迷ったら調理法＋素材＋形で言い直す。'});
+  });
+  return res;
+}
+/*END*/
+
+(function(){
+  const $=function(id){return document.getElementById(id);};
+  const KEY='shinagaki-v1';
+  let st={town:'plain',g:GROUPS.map(function(x){return x[0];}),c:CATS.slice(),s:SHAPES.slice(),mode:'both',num:12,monsters:false,seller:true,nick:true,onlypin:false,custom:[],items:[]};
+  function load(saved){
+    if(saved&&typeof saved==='object'){Object.keys(st).forEach(function(k){if(saved[k]!==undefined)st[k]=saved[k];});}
+  }
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+  function ings(){
+    const extra=st.custom.map(function(c){return I(c.n,c.c,{animal:c.a?1:0,custom:1,monster:c.a?1:0,w:2.5});});
+    return BASE_ING.concat(st.monsters?MONSTERS:[],extra);
+  }
+  function town(){return TOWNS.filter(function(t){return t.id===st.town;})[0]||TOWNS[0];}
+  function pool(){
+    let p=filterPool(buildCandidates(ings()),{g:new Set(st.g),c:new Set(st.c),s:new Set(st.s)});
+    if(st.mode==='sweet')p=p.filter(function(x){return x.t==='甘';});
+    if(st.mode==='salt')p=p.filter(function(x){return x.t==='塩';});
+    return p;
+  }
+  function chipRow(el,list,key){
+    el.innerHTML='';
+    list.forEach(function(it){
+      const id=Array.isArray(it)?it[0]:it,label=Array.isArray(it)?it[1]:it;
+      const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=label;
+      b.setAttribute('aria-pressed',st[key].indexOf(id)>=0?'true':'false');
+      b.addEventListener('click',function(){
+        const i=st[key].indexOf(id);if(i>=0)st[key].splice(i,1);else st[key].push(id);
+        b.setAttribute('aria-pressed',i>=0?'false':'true');updateCount();save();
+      });
+      el.appendChild(b);
+    });
+  }
+  function renderTowns(){
+    const el=$('towns');el.innerHTML='';
+    TOWNS.forEach(function(t){
+      const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t.n;
+      b.setAttribute('aria-pressed',t.id===st.town?'true':'false');
+      b.addEventListener('click',function(){st.town=t.id;renderTowns();generate(false);});
+      el.appendChild(b);
+    });
+    $('townnote').textContent=town().note;
+    $('boardtitle').textContent=town().id==='plain'?'品書き':town().n+'の品書き';
+  }
+  function updateCount(){
+    $('count').textContent='この条件で '+pool().length.toLocaleString('ja-JP')+' 通り';
+  }
+  function line(x){
+    let s=x.name;
+    if(st.seller)s+='｜'+x.seller+'の'+x.head;
+    if(st.nick)s+='｜あだ名: '+x.nick;
+    if(x.star)s+='｜名物';
+    return s;
+  }
+  function renderBoard(fresh){
+    const el=$('board');el.innerHTML='';
+    st.items.forEach(function(x,i){
+      const b=document.createElement('button');b.type='button';b.className='tag'+(fresh&&!x.pinned?' fresh':'');
+      b.style.animationDelay=(i*25)+'ms';
+      b.setAttribute('aria-pressed',x.pinned?'true':'false');
+      b.setAttribute('aria-label',x.name+(x.pinned?'（採用中）':''));
+      const v=document.createElement('span');v.className='v';b.appendChild(v);
+      const nm=document.createElement('span');nm.className='name';nm.textContent=x.name;v.appendChild(nm);
+      if(st.seller){const s=document.createElement('span');s.className='sub';s.textContent=x.seller+'の'+x.head;v.appendChild(s);}
+      if(st.nick){const s=document.createElement('span');s.className='sub';s.textContent='「'+x.nick+'」';v.appendChild(s);}
+      const m=document.createElement('span');m.className='mark '+(x.t==='甘'?'sweet':'salt');m.textContent=x.t==='甘'?'甘':'塩';b.appendChild(m);
+      if(x.star){const s=document.createElement('span');s.className='star';s.textContent='名物';b.appendChild(s);}
+      b.addEventListener('click',function(){x.pinned=!x.pinned;b.setAttribute('aria-pressed',x.pinned?'true':'false');b.classList.remove('fresh');renderText();save();});
+      el.appendChild(b);
+    });
+    renderText();
+  }
+  function renderText(){
+    const pins=st.items.filter(function(x){return x.pinned;});
+    const list=st.onlypin?pins:st.items;
+    $('text').value=list.map(line).join('\n');
+  }
+  function generate(dropPins){
+    if(dropPins)st.items.forEach(function(x){x.pinned=false;});
+    const kept=st.items.filter(function(x){return x.pinned;});
+    const p=pool();
+    const need=Math.max(0,st.num-kept.length);
+    const keptShim=kept.map(function(k){return {name:k.name,t:k.t,g:k.g,word:k.word,ing:k.ingn?{n:k.ingn}:null};});
+    const got=decorate(sample(p,need,st.mode,town(),keptShim),kept,town());
+    st.items=kept.concat(got);
+    const em=$('empty');
+    if(got.length<need){em.hidden=false;em.textContent=p.length===0?'この条件に合う名前がありません。調理法・素材・形のどれかを選び直してください。':'この条件では '+st.items.length+' 品しか並びません。条件をゆるめると増えます。';}
+    else em.hidden=true;
+    updateCount();renderBoard(true);save();
+  }
+  function renderMine(){
+    const el=$('mine');el.innerHTML='';
+    if(!st.custom.length){el.textContent='まだ足していません。';return;}
+    st.custom.forEach(function(c,i){
+      const b=document.createElement('button');b.type='button';b.textContent=c.n+'（'+c.c+'）×';b.setAttribute('aria-label',c.n+'を外す');
+      b.addEventListener('click',function(){st.custom.splice(i,1);renderMine();updateCount();save();});
+      el.appendChild(b);
+    });
+  }
+  function renderDict(){
+    const q=$('q').value.trim();
+    const names=MONSTERS.map(function(m){return m.n;}).concat(st.custom.map(function(c){return c.n;}));
+    const v=$('verdict');v.innerHTML='';
+    if(q){
+      const res=judge(q,names);
+      if(!res.length){const d=document.createElement('div');d.innerHTML='<b class="ok">通る</b> ';d.appendChild(document.createTextNode('外来語は見つかりません。'));v.appendChild(d);}
+      res.forEach(function(r){
+        const d=document.createElement('div');const b=document.createElement('b');b.className=r.v;b.textContent=r.w+(r.v==='ok'?' ○':r.v==='ng'?' ×':' ？');
+        d.appendChild(b);d.appendChild(document.createTextNode(' '+r.msg));v.appendChild(d);
+      });
+    }
+    const el=$('dict');el.innerHTML='';
+    const rows=DICT.filter(function(d){return !q||d[0].indexOf(q)>=0||q.indexOf(d[0])>=0||d[1].indexOf(q)>=0;});
+    (rows.length?rows:DICT).forEach(function(d){
+      const li=document.createElement('li');
+      const a=document.createElement('span');a.className='from';a.textContent=d[0];
+      const b=document.createElement('span');b.textContent=d[1];
+      li.appendChild(a);li.appendChild(document.createTextNode('→'));li.appendChild(b);
+      if(d[2]!=='k'){const w=document.createElement('span');w.className='why';w.textContent=WHY[d[2]];li.appendChild(w);}
+      el.appendChild(li);
+    });
+  }
+  function start(data){
+    let saved=null;
+    if(data&&data.town)saved=data;
+    else{try{saved=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){}}
+    load(saved);
+    chipRow($('chips-g'),GROUPS,'g');chipRow($('chips-c'),CATS,'c');chipRow($('chips-s'),SHAPES,'s');
+    $('mode').value=st.mode;$('num').value=String(st.num);
+    $('monsters').checked=st.monsters;$('seller').checked=st.seller;$('nick').checked=st.nick;$('onlypin').checked=st.onlypin;
+    renderTowns();renderMine();renderDict();
+    if(st.items.length){updateCount();renderBoard(false);}else generate(false);
+
+    ['g','c','s'].forEach(function(k){
+      $('all-'+k).addEventListener('click',function(){
+        st[k]=(k==='g'?GROUPS.map(function(x){return x[0];}):k==='c'?CATS:SHAPES).slice();
+        chipRow($('chips-'+k),k==='g'?GROUPS:k==='c'?CATS:SHAPES,k);updateCount();save();
+      });
+    });
+    $('mode').addEventListener('change',function(e){st.mode=e.target.value;updateCount();save();});
+    $('num').addEventListener('change',function(e){st.num=parseInt(e.target.value,10);save();});
+    $('monsters').addEventListener('change',function(e){st.monsters=e.target.checked;updateCount();save();});
+    $('seller').addEventListener('change',function(e){st.seller=e.target.checked;renderBoard(false);save();});
+    $('nick').addEventListener('change',function(e){st.nick=e.target.checked;renderBoard(false);save();});
+    $('onlypin').addEventListener('change',function(e){st.onlypin=e.target.checked;renderText();save();});
+    $('go').addEventListener('click',function(){generate(false);});
+    $('clear').addEventListener('click',function(){generate(true);});
+    $('copy').addEventListener('click',function(){
+      const t=$('text');const msg=$('copied');
+      const done=function(){msg.textContent='コピーしました。';setTimeout(function(){msg.textContent='';},1800);};
+      const fail=function(){t.focus();t.select();msg.textContent='自動でコピーできませんでした。選択した状態なので、そのままコピーしてください。';};
+      try{navigator.clipboard.writeText(t.value).then(done,fail);}catch(e){fail();}
+    });
+    function addIng(){
+      const n=$('addname').value.trim();if(!n)return;
+      const k=$('addkind').value.split(':');
+      if(!st.custom.some(function(c){return c.n===n&&c.c===k[0];}))st.custom.push({n:n,c:k[0],a:k[1]==='a'});
+      $('addname').value='';renderMine();updateCount();save();
+    }
+    $('addbtn').addEventListener('click',addIng);
+    $('addname').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();addIng();}});
+    $('q').addEventListener('input',renderDict);
+    try{if(window.claude&&window.claude.hot&&window.claude.hot.snapshot)window.claude.hot.snapshot(function(){return st;});}catch(e){}
+  }
+  if(typeof document==='undefined')return;
+  if(window.claude&&window.claude.hot&&window.claude.hot.ready)window.claude.hot.ready(start);
+  else start((window.claude&&window.claude.hot&&window.claude.hot.data)||{});
+})();
+</script>
+</body>
+</html>
